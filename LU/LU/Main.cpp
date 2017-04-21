@@ -3,11 +3,8 @@
 #include "conio.h"
 #include "LuDecomposer.h"
 #include <malloc.h>
+#include <string.h>
 
-
-const double DOUBLE_EPS = 0.00000001;
-
-bool AreEqual(double *a, double *b, int n);
 void LuDecomposerTestOne(LuDecomposer decomposer);
 
 int main()
@@ -22,22 +19,12 @@ int main()
 	return 0;
 }
 
-bool AreEqual(double *a, double *b, int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		if (abs(a[i] - b[i]) > DOUBLE_EPS)
-			return false;
-	}
-
-	return true;
-}
 
 void LuDecomposerTestOne(LuDecomposer decomposer)
 {
-	int size = 9;
+	int size = 3;
 	double *L, *U;
-	double *A = new double[]{
+	double A[] = {
 		1, 2, 3, 4, 5, 6, 7, 8, 9
 	};
 
@@ -53,23 +40,22 @@ void LuDecomposerTestOne(LuDecomposer decomposer)
 			0.000, 0.000, 0.000
 	};
 
-	L = (double*)_mm_malloc(size*sizeof(double), 32);
-	U = (double*)_mm_malloc(size*sizeof(double), 32);
+	L = new double[size * size]();
+	U = new double[size * size]();
 
 	decomposer.LU_Decomposition(A, L, U, size);
 
-	if (!AreEqual(L, expectedL, size))
-	{
-		printf("============= L is not correct\n");
-	}
-	else if (!AreEqual(U, expectedU, size))
-	{
-		printf("============= U is not correct\n");
-	}
-	else{
-		printf("============= Success!\n");
-	}
+	bool isCorrect = decomposer.IsCorrectLU(A, L, U, size);
 
-	_mm_free(L);
-	_mm_free(U);
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+		printf("============= Error!\n");
+
+
+	printf("============= Print L\n");
+	decomposer.PrintMatrix(L, size);
+	printf("============= Print U\n");
+	decomposer.PrintMatrix(U, size);
+
 }
