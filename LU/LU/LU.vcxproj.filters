@@ -21,9 +21,15 @@
     <ClCompile Include="LuDecomposer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LuTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LuDecomposer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LuTests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
