@@ -31,6 +31,12 @@ int main()
 	printf("============= Tets 6\n");
 	tests.SolveLeftLowerBlockTestTwo();
 
+	printf("============= Tets 7\n");
+	tests.MaltiplicationTestOne();
+
+	printf("============= Tets 8\n");
+	tests.MaltiplicationTestTwo();
+
 	_getch();
 	return 0;
 }

@@ -109,7 +109,7 @@ void LuTests::SolveRightUpperBlockTestOne()
 		6, -4, 3
 	};
 
-	decomposer->SolveRightUpperBlock(A, L, U, size, size, 0, 0);
+	decomposer->SolveRightUpperBlock(A, L, U, size, size, size, 0, 0);
 
 	bool isCorrect = decomposer->AreEqual(U, expectedU, size);
 
@@ -152,7 +152,7 @@ void LuTests::SolveRightUpperBlockTestTwo()
 		0, 0, 0, 0, 0
 	};
 
-	decomposer->SolveRightUpperBlock(A, L, U, size, 3, 1, 2);
+	decomposer->SolveRightUpperBlock(A, L, U, size, 3, 3, 1, 2);
 
 	bool isCorrect = decomposer->AreEqual(U, expectedU, size);
 
@@ -189,7 +189,7 @@ void LuTests::SolveLeftLowerBlockTestOne()
 		1, -2, 3.5
 	};
 
-	decomposer->SolveLeftLowerBlock(A, L, U, size, size, 0, 0);
+	decomposer->SolveLeftLowerBlock(A, L, U, size, size, size, 0, 0);
 
 	bool isCorrect = decomposer->AreEqual(L, expectedL, size);
 
@@ -232,7 +232,7 @@ void LuTests::SolveLeftLowerBlockTestTwo()
 		0, 0, 0, 0, 0
 	};
 
-	decomposer->SolveLeftLowerBlock(A, L, U, size, 3, 1, 2);
+	decomposer->SolveLeftLowerBlock(A, L, U, size, 3, 3, 1, 2);
 
 	bool isCorrect = decomposer->AreEqual(L, expectedL, size);
 
@@ -243,5 +243,81 @@ void LuTests::SolveLeftLowerBlockTestTwo()
 		printf("============= Error!\n");
 		printf("============= Print L\n");
 		decomposer->PrintMatrix(L, size);
+	}
+}
+
+void LuTests::MaltiplicationTestOne()
+{
+	double A[] = {
+		1, 2, 0,
+		3, 4, 0,
+		5, 6, 0
+	};
+
+	double B[] = {
+		1, 3, 5,
+		2, 4, 6,
+		0, 0, 0
+	};
+
+	double expectedAA[] = {
+		5, 11, 17,
+		11, 25, 39,
+		17, 39, 61
+	};
+
+	double *AA = new double[9]();
+
+	decomposer->Multiplication(A, B, AA, 3, 3, 2, 0, 0, 0, 0);
+
+	bool isCorrect = decomposer->AreEqual(AA, expectedAA, 3);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+	{
+		printf("============= Error!\n");
+		printf("============= Print AA\n");
+		decomposer->PrintMatrix(AA, 3);
+	}
+}
+
+void LuTests::MaltiplicationTestTwo()
+{
+	double A[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 1, 2, 0,
+		0, 0, 3, 4, 0,
+		0, 0, 5, 6, 0,
+		0, 0, 0, 0, 0
+	};
+
+	double B[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 1, 3, 5,
+		0, 0, 2, 4, 6,
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0
+	};
+
+	double expectedAA[] = {
+		5, 11, 17,
+		11, 25, 39,
+		17, 39, 61
+	};
+
+	double *AA = new double[9]();
+
+	decomposer->Multiplication(A, B, AA, 5, 3, 2, 1, 2, 1, 2);
+
+	bool isCorrect = decomposer->AreEqual(AA, expectedAA, 3);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+	{
+		printf("============= Error!\n");
+		printf("============= Print AA\n");
+		decomposer->PrintMatrix(AA, 3);
 	}
 }
