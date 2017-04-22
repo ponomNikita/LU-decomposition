@@ -18,7 +18,7 @@ LuDecomposer::~LuDecomposer()
 */
 void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 {
-	LU(A, L, U, N, N, 0);
+	LU(A, L, U, N, N, 0, 0);
 }
 
 /*
@@ -31,30 +31,30 @@ void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 * subMatrixSize - размер подматрицы, для которой будет проводится разложение
 * submatrixIndex - индекс с которого начинается подматрица
 */
-void LuDecomposer::LU(double * A, double * L, double * U, int N, int subMatrixSize, int submatrixIndex)
+void LuDecomposer::LU(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias)
 {
 	double sum;
 
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < subMatrixSize; i++)
 	{
-		L[i * N + i] = 1;
-		for (int j = i; j < N; j++)
+		L[(i + rowBias) * N + (i + colBias)] = 1;
+		for (int j = i; j < subMatrixSize; j++)
 		{
 			sum = 0;
 			for (int k = 0; k < i; k++)
 			{
-				sum += L[i * N + k] * U[k * N + j];
+				sum += L[(i + rowBias) * N + (k + colBias)] * U[(k + rowBias) * N + (j + colBias)];
 			}
-			U[i * N + j] = A[i * N + j] - sum;
+			U[(i + rowBias) * N + (j + colBias)] = A[(i + rowBias) * N + (j + colBias)] - sum;
 		}
-		for (int j = i + 1; j < N; j++)
+		for (int j = i + 1; j < subMatrixSize; j++)
 		{
 			sum = 0;
 			for (int k = 0; k < i; k++)
 			{
-				sum += L[j * N + k] * U[k * N + i];
+				sum += L[(j + rowBias) * N + (k + colBias)] * U[(k + rowBias) * N + (i + colBias)];
 			}
-			L[j * N + i] = (A[j * N + i] - sum) / U[i * N + i];
+			L[(j + rowBias) * N + (i + colBias)] = (A[(j + rowBias) * N + (i + colBias)] - sum) / U[(i + rowBias) * N + (i + colBias)];
 		}
 	}
 	

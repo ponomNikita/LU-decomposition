@@ -13,6 +13,6 @@ public:
 private: 
 	const double DOUBLE_EPS = 0.00000001;
 
-	void LU(double * A, double * L, double * U, int N, int subMatrixSize, int submatrixIndex);
+	void LU(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias);
 };
 

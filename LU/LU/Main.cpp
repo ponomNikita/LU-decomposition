@@ -73,17 +73,15 @@ void LuDecomposerTestTwo(LuDecomposer decomposer)
 
 	decomposer.LU_Decomposition(A, L, U, size);
 
+	printf("============= Print L\n");
+	decomposer.PrintMatrix(L, size);
+	printf("============= Print U\n");
+	decomposer.PrintMatrix(U, size);
+
 	bool isCorrect = decomposer.IsCorrectLU(A, L, U, size);
 
 	if (isCorrect)
 		printf("============= Success!\n");
 	else
 		printf("============= Error!\n");
-
-
-	printf("============= Print L\n");
-	decomposer.PrintMatrix(L, size);
-	printf("============= Print U\n");
-	decomposer.PrintMatrix(U, size);
-
 }
