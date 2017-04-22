@@ -54,6 +54,7 @@ void LuDecomposerTestOne(LuDecomposer decomposer)
 	printf("============= Print U\n");
 	decomposer.PrintMatrix(U, size);
 
+	delete[] L, U, A;
 }
 
 void LuDecomposerTestTwo(LuDecomposer decomposer)
@@ -84,4 +85,6 @@ void LuDecomposerTestTwo(LuDecomposer decomposer)
 		printf("============= Success!\n");
 	else
 		printf("============= Error!\n");
+
+	delete[] L, U, A;
 }

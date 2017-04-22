@@ -6,10 +6,15 @@ LuDecomposer::LuDecomposer()
 {
 }
 
+LuDecomposer::LuDecomposer(int blockSize)
+{
+	BlockSize = blockSize;
+}
 
 LuDecomposer::~LuDecomposer()
 {
 }
+
 
 /*
 * A - исходная матрица 
@@ -18,6 +23,13 @@ LuDecomposer::~LuDecomposer()
 */
 void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 {
+	int blockCount = N % BlockSize != 0 ? N / BlockSize + 1 : N / BlockSize;
+
+	for (int i = 0; i < blockCount; i++)
+	{
+
+	}
+
 	LU(A, L, U, N, N, 0, 0);
 }
 
@@ -29,7 +41,8 @@ void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 * L, U - матрицы, которые получаются в результате разложения
 * N - размер исходной матрицы А
 * subMatrixSize - размер подматрицы, для которой будет проводится разложение
-* submatrixIndex - индекс с которого начинается подматрица
+* rowBias - смещение подматрицы по строкам
+* colBias - смещение матрицы по столбцам
 */
 void LuDecomposer::LU(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias)
 {
@@ -76,12 +89,16 @@ void LuDecomposer::PrintMatrix(double *A, int n)
 bool LuDecomposer::IsCorrectLU(double *A, double *L, double *U, int size)
 {
 	double *LU = new double[size * size]();
-	Multiplication(L, U, LU, size);
+	Multiplication(L, U, LU, size, size, 0, 0);
 
 	printf("============= Print L * U\n");
 	PrintMatrix(LU, size);
 	
-	return AreEqual(A, LU, size);
+	bool res = AreEqual(A, LU, size);
+
+	delete[] LU;
+
+	return res;
 }
 
 
@@ -96,22 +113,22 @@ bool LuDecomposer::AreEqual(double *a, double *b, int n)
 	return true;
 }
 
-void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size)
+void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, int subMatrixSize, int rowBias, int colBias)
 {
 	int u, v, p;
 	#pragma omp parallel  num_threads(threadCount)	
 	{
 		#pragma omp for 
-		for (int i = 0; i < size; i++) 
+		for (int i = 0; i < subMatrixSize; i++)
 		{
-			u = i * size;
-			for (int j = 0; j < size; j++)
+			u = (i + rowBias) * size + colBias;
+			for (int j = 0; j < subMatrixSize; j++)
 			{
-				v = j * size;
+				v = (j + rowBias) * size + colBias;
 				p = u + j;
 
 				#pragma simd
-				for (int t = 0; t < size; t++)
+				for (int t = 0; t < subMatrixSize; t++)
 				{
 					Res[u + t] += A[p] * B[v + t];
 				}
