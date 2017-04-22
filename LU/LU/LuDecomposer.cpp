@@ -23,7 +23,7 @@ LuDecomposer::~LuDecomposer()
 */
 void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 {
-	int blockCount = N % BlockSize != 0 ? N / BlockSize + 1 : N / BlockSize;
+	int blockCount = N / BlockSize;
 
 	for (int i = 0; i < blockCount; i++)
 	{
@@ -90,11 +90,13 @@ bool LuDecomposer::IsCorrectLU(double *A, double *L, double *U, int size)
 {
 	double *LU = new double[size * size]();
 	Multiplication(L, U, LU, size, size, 0, 0);
-
-	printf("============= Print L * U\n");
-	PrintMatrix(LU, size);
 	
 	bool res = AreEqual(A, LU, size);
+	if (!res)
+	{
+		printf("============= Print L * U\n");
+		PrintMatrix(LU, size);
+	}
 
 	delete[] LU;
 
@@ -136,3 +138,25 @@ void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, i
 		}
 	}
 }
+
+void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias)
+{
+	double sum;
+
+	// Цикл по столбцам матрицы А
+	for (int j = 0; j < subMatrixSize; j++)
+	{
+		// Цикл по строчкам L
+		for (int i = 0; i < subMatrixSize; i++)
+		{
+			sum = 0;
+			for (int k = 0; k < i; k++)
+			{
+				sum += U[(k + rowBias) * N + j + colBias] * L[(i + rowBias) * N + k + colBias];
+			}
+
+			U[(i + rowBias) * N + j + colBias] = A[(i + rowBias) * N + j + colBias] - sum;
+		}
+	}
+}
+

@@ -7,7 +7,8 @@
 
 void LuDecomposerTestOne(LuDecomposer decomposer);
 void LuDecomposerTestTwo(LuDecomposer decomposer);
-
+void SolveRightUpperBlockTestOne(LuDecomposer decomposer);
+void SolveRightUpperBlockTestTwo(LuDecomposer decomposer);
 
 int main()
 {
@@ -20,6 +21,12 @@ int main()
 
 	printf("============= Tets 2\n");
 	LuDecomposerTestTwo(decomposer);
+
+	printf("============= Tets 3\n");
+	SolveRightUpperBlockTestOne(decomposer);
+
+	printf("============= Tets 4\n");
+	SolveRightUpperBlockTestTwo(decomposer);
 
 	_getch();
 	return 0;
@@ -49,10 +56,13 @@ void LuDecomposerTestOne(LuDecomposer decomposer)
 		printf("============= Error!\n");
 
 
-	printf("============= Print L\n");
-	decomposer.PrintMatrix(L, size);
-	printf("============= Print U\n");
-	decomposer.PrintMatrix(U, size);
+	if (!isCorrect)
+	{
+		printf("============= Print L\n");
+		decomposer.PrintMatrix(L, size);
+		printf("============= Print U\n");
+		decomposer.PrintMatrix(U, size);
+	}
 
 	delete[] L, U, A;
 }
@@ -74,11 +84,6 @@ void LuDecomposerTestTwo(LuDecomposer decomposer)
 
 	decomposer.LU_Decomposition(A, L, U, size);
 
-	printf("============= Print L\n");
-	decomposer.PrintMatrix(L, size);
-	printf("============= Print U\n");
-	decomposer.PrintMatrix(U, size);
-
 	bool isCorrect = decomposer.IsCorrectLU(A, L, U, size);
 
 	if (isCorrect)
@@ -86,5 +91,93 @@ void LuDecomposerTestTwo(LuDecomposer decomposer)
 	else
 		printf("============= Error!\n");
 
+	if (!isCorrect)
+	{
+		printf("============= Print L\n");
+		decomposer.PrintMatrix(L, size);
+		printf("============= Print U\n");
+		decomposer.PrintMatrix(U, size);
+	}
+
 	delete[] L, U, A;
+}
+
+void SolveRightUpperBlockTestOne(LuDecomposer decomposer)
+{
+	int size = 3;
+	double A[] = {
+		1, 0, 1,
+		0, 1, 1, 
+		1, 0, 2
+	};
+
+	double L[] = {
+		1, 0, 0,
+		2, 1, 0,
+		3, 4, 1
+	};
+
+	double *U = new double[size * size]();
+
+	double expectedU[] = {
+		1, 0, 1,
+		-2, 1, -1,
+		6, -4, 3
+	};
+
+	decomposer.SolveRightUpperBlock(A, L, U, size, size, 0, 0);
+
+	bool isCorrect = decomposer.AreEqual(U, expectedU, size);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+	{
+		printf("============= Error!\n");
+		printf("============= Print U\n");
+		decomposer.PrintMatrix(U, size);
+	}
+}
+
+void SolveRightUpperBlockTestTwo(LuDecomposer decomposer)
+{
+	int size = 5;
+	double A[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 1, 0, 1,
+		0, 0, 0, 1, 1,
+		0, 0, 1, 0, 2,
+		0, 0, 0, 0, 0
+	};
+
+	double L[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 1, 0, 0,
+		0, 0, 2, 1, 0,
+		0, 0, 3, 4, 1,
+		0, 0, 0, 0, 0
+	};
+
+	double *U = new double[size * size]();
+
+	double expectedU[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 1, 0, 1,
+		0, 0, -2, 1, -1,
+		0, 0, 6, -4, 3,
+		0, 0, 0, 0, 0
+	};
+
+	decomposer.SolveRightUpperBlock(A, L, U, size, 3, 1, 2);
+
+	bool isCorrect = decomposer.AreEqual(U, expectedU, size);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+	{
+		printf("============= Error!\n");
+		printf("============= Print U\n");
+		decomposer.PrintMatrix(U, size);
+	}
 }
