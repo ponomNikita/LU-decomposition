@@ -25,6 +25,12 @@ int main()
 	printf("============= Tets 4\n");
 	tests.SolveRightUpperBlockTestTwo();
 
+	printf("============= Tets 5\n");
+	tests.SolveLeftLowerBlockTestOne();
+
+	printf("============= Tets 6\n");
+	tests.SolveLeftLowerBlockTestTwo();
+
 	_getch();
 	return 0;
 }

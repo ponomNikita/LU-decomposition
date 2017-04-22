@@ -12,6 +12,8 @@ public:
 	bool AreEqual(double *a, double *b, int n);
 	void Multiplication(double *A, double *B, double *Res, int size, int subMatrixSize, int rowBias, int colBias);
 	void SolveRightUpperBlock(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias);
+	void SolveLeftLowerBlock(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias);
+
 
 private: 
 	const double DOUBLE_EPS = 0.00000001;

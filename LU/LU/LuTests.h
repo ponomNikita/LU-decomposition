@@ -12,6 +12,8 @@ public:
 	void LuDecomposerTestTwo();
 	void SolveRightUpperBlockTestOne();
 	void SolveRightUpperBlockTestTwo();
+	void SolveLeftLowerBlockTestOne();
+	void SolveLeftLowerBlockTestTwo();
 
 private:
 	LuDecomposer *decomposer;

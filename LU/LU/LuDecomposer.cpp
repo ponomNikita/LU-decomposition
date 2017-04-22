@@ -160,3 +160,24 @@ void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int 
 	}
 }
 
+void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N, int subMatrixSize, int rowBias, int colBias)
+{
+	double sum;
+
+	// Цикл по строчка матрицы А
+	for (int j = 0; j < subMatrixSize; j++)
+	{
+		// Цикл по столбцам матрицы U
+		for (int i = 0; i < subMatrixSize; i++)
+		{
+			sum = 0;
+			for (int k = 0; k < i; k++)
+			{
+				sum += U[(k + rowBias) * N + i + colBias] * L[(j + rowBias) * N + k + colBias];
+			}
+
+			L[(j + rowBias) * N + i + colBias] = (A[(j + rowBias) * N + i + colBias] - sum) / U[(i + rowBias) * N + i + colBias];
+		}
+	}
+}
+
