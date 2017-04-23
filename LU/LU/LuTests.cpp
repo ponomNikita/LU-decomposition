@@ -109,7 +109,7 @@ void LuTests::SolveRightUpperBlockTestOne()
 		6, -4, 3
 	};
 
-	decomposer->SolveRightUpperBlock(A, L, U, size, size, size, 0, 0);
+	decomposer->SolveRightUpperBlock(A, L, U, size, size, size, 0, 0, 0, 0);
 
 	bool isCorrect = decomposer->AreEqual(U, expectedU, size);
 
@@ -152,7 +152,7 @@ void LuTests::SolveRightUpperBlockTestTwo()
 		0, 0, 0, 0, 0
 	};
 
-	decomposer->SolveRightUpperBlock(A, L, U, size, 3, 3, 1, 2);
+	decomposer->SolveRightUpperBlock(A, L, U, size, 3, 3, 1, 2, 1, 2);
 
 	bool isCorrect = decomposer->AreEqual(U, expectedU, size);
 
@@ -189,7 +189,7 @@ void LuTests::SolveLeftLowerBlockTestOne()
 		1, -2, 3.5
 	};
 
-	decomposer->SolveLeftLowerBlock(A, L, U, size, size, size, 0, 0);
+	decomposer->SolveLeftLowerBlock(A, L, U, size, size, size, 0, 0, 0, 0);
 
 	bool isCorrect = decomposer->AreEqual(L, expectedL, size);
 
@@ -232,7 +232,7 @@ void LuTests::SolveLeftLowerBlockTestTwo()
 		0, 0, 0, 0, 0
 	};
 
-	decomposer->SolveLeftLowerBlock(A, L, U, size, 3, 3, 1, 2);
+	decomposer->SolveLeftLowerBlock(A, L, U, size, 3, 3, 1, 2, 1, 2);
 
 	bool isCorrect = decomposer->AreEqual(L, expectedL, size);
 
@@ -319,5 +319,48 @@ void LuTests::MaltiplicationTestTwo()
 		printf("============= Error!\n");
 		printf("============= Print AA\n");
 		decomposer->PrintMatrix(AA, 3);
+	}
+}
+
+void LuTests::SolveRightUpperBlockTestForNonSquareMatrix()
+{
+	int size = 5;
+	double A[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 2, 1, 2,
+		0, 0, 1, 2, 1,
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0
+	};
+
+	double L[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0,
+		0, 1, 0, 0, 0,
+		0, 1, 1, 0, 0,
+		0, 0, 0, 0, 0
+	};
+
+	double *U = new double[size * size]();
+
+	double expectedU[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 2, 1, 2,
+		0, 0, -1, 1, -1,
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0
+	};
+
+	decomposer->SolveRightUpperBlock(A, L, U, size, 2, 3, 2, 1, 1, 2);
+
+	bool isCorrect = decomposer->AreEqual(U, expectedU, size);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+	{
+		printf("============= Error!\n");
+		printf("============= Print U\n");
+		decomposer->PrintMatrix(U, size);
 	}
 }

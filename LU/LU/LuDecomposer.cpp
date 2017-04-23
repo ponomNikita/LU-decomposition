@@ -26,16 +26,26 @@ void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 	int blockCount = N / BlockSize;
 	int currMatrixSize = N;
 
-	for (int i = 0; i < blockCount; i++)
+	for (int i = 0; i <= blockCount; i++)
 	{
-		//LU(A, L, U, N, BlockSize, i * BlockSize, i * BlockSize);
-		//SolveRightUpperBlock(A, L, U, N, BlockSize, currMatrixSize - BlockSize, i * BlockSize, i * BlockSize + 1);
-		//SolveLeftLowerBlock(A, L, U, N, currMatrixSize - BlockSize, BlockSize, i * BlockSize + 1, i * BlockSize);
+	/*	if (currMatrixSize - BlockSize <= 0)
+		{
+			LU(A, L, U, N, BlockSize, i * BlockSize, i * BlockSize);
+			break;
+		}
 
-		//double *L21U12 = new double[(currMatrixSize - BlockSize) * (currMatrixSize - BlockSize)]();
-		//Multiplication()
+		LU(A, L, U, N, BlockSize, i * BlockSize, i * BlockSize);
 
-		//currMatrixSize = currMatrixSize - BlockSize;
+		SolveRightUpperBlock(A, L, U, N, BlockSize, currMatrixSize - BlockSize, i * BlockSize, (i + 1) * BlockSize);
+
+		SolveLeftLowerBlock(A, L, U, N, currMatrixSize - BlockSize, BlockSize, (i + 1) * BlockSize, i * BlockSize);
+
+		double *L21U12 = new double[(currMatrixSize - BlockSize) * (currMatrixSize - BlockSize)]();
+		Multiplication(L, U, L21U12, N, currMatrixSize - BlockSize, BlockSize, (i + 1) * BlockSize, i * BlockSize, i * BlockSize, (i + 1) * BlockSize);
+
+		Diff(A, L21U12, currMatrixSize - BlockSize, (i + 1) * BlockSize, (i + 1) * BlockSize);
+
+		currMatrixSize = currMatrixSize - BlockSize;*/
 	}
 
 	LU(A, L, U, N, N, 0, 0);
@@ -147,7 +157,7 @@ void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, i
 	}
 }
 
-void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int N, int subMatrixHeight, int subMatrixWidth, int rowBias, int colBias)
+void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int N, int subMatrixHeight, int subMatrixWidth, int rowBiasL, int colBiasL, int rowBiasU, int colBiasU)
 {
 	double sum;
 
@@ -160,15 +170,15 @@ void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int 
 			sum = 0;
 			for (int k = 0; k < i; k++)
 			{
-				sum += U[(k + rowBias) * N + j + colBias] * L[(i + rowBias) * N + k + colBias];
+				sum += U[(k + rowBiasU) * N + j + colBiasU] * L[(i + rowBiasL) * N + k + colBiasL];
 			}
 
-			U[(i + rowBias) * N + j + colBias] = A[(i + rowBias) * N + j + colBias] - sum;
+			U[(i + rowBiasU) * N + j + colBiasU] = A[(i + rowBiasU) * N + j + colBiasU] - sum;
 		}
 	}
 }
 
-void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N, int subMatrixHeight, int subMatrixWidth, int rowBias, int colBias)
+void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N, int subMatrixHeight, int subMatrixWidth, int rowBiasL, int colBiasL, int rowBiasU, int colBiasU)
 {
 	double sum;
 
@@ -181,11 +191,23 @@ void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N
 			sum = 0;
 			for (int k = 0; k < i; k++)
 			{
-				sum += U[(k + rowBias) * N + i + colBias] * L[(j + rowBias) * N + k + colBias];
+				sum += U[(k + rowBiasU) * N + i + colBiasU] * L[(j + rowBiasL) * N + k + colBiasL];
 			}
 
-			L[(j + rowBias) * N + i + colBias] = (A[(j + rowBias) * N + i + colBias] - sum) / U[(i + rowBias) * N + i + colBias];
+			L[(j + rowBiasL) * N + i + colBiasL] = (A[(j + rowBiasL) * N + i + colBiasL] - sum) / U[(i + rowBiasU) * N + i + colBiasU];
 		}
 	}
 }
+
+void LuDecomposer::Diff(double *A, double *B, int subMatrixSize, int rowBias, int colBias)
+{
+	for (int i = 0; i < subMatrixSize; i++)
+	{
+		for (int j = 0; j < subMatrixSize; j++)
+		{
+			A[(i + rowBias) * subMatrixSize + j + colBias] -= B[i * subMatrixSize + j];
+		}
+	}
+}
+
 

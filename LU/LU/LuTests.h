@@ -12,6 +12,7 @@ public:
 	void LuDecomposerTestTwo();
 	void SolveRightUpperBlockTestOne();
 	void SolveRightUpperBlockTestTwo();
+	void SolveRightUpperBlockTestForNonSquareMatrix();
 	void SolveLeftLowerBlockTestOne();
 	void SolveLeftLowerBlockTestTwo();
 	void MaltiplicationTestOne();

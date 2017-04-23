@@ -13,29 +13,32 @@ int main()
 
 	printf("============= Runing tests\n");
 
-	printf("============= Tets 1\n");
+	printf("============= LuDecomposerTestOne\n");
 	tests.LuDecomposerTestOne();
 
-	printf("============= Tets 2\n");
+	printf("============= LuDecomposerTestTwo\n");
 	tests.LuDecomposerTestTwo();
 
-	printf("============= Tets 3\n");
+	printf("============= SolveRightUpperBlockTestOne\n");
 	tests.SolveRightUpperBlockTestOne();
 
-	printf("============= Tets 4\n");
+	printf("============= SolveRightUpperBlockTestTwo\n");
 	tests.SolveRightUpperBlockTestTwo();
 
-	printf("============= Tets 5\n");
+	printf("============= SolveLeftLowerBlockTestOne\n");
 	tests.SolveLeftLowerBlockTestOne();
 
-	printf("============= Tets 6\n");
+	printf("============= SolveLeftLowerBlockTestTwo\n");
 	tests.SolveLeftLowerBlockTestTwo();
 
-	printf("============= Tets 7\n");
+	printf("============= MaltiplicationTestOne\n");
 	tests.MaltiplicationTestOne();
 
-	printf("============= Tets 8\n");
+	printf("=============MaltiplicationTestTwo\n");
 	tests.MaltiplicationTestTwo();
+
+	printf("=============SolveRightUpperBlockTestForNonSquareMatrix\n");
+	tests.SolveRightUpperBlockTestForNonSquareMatrix();
 
 	_getch();
 	return 0;
