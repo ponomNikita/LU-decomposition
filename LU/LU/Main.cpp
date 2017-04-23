@@ -46,6 +46,9 @@ int main()
 	printf("=============SolveLeftLowerBlockTestNonSquareMatrix\n");
 	tests.SolveLeftLowerBlockTestNonSquareMatrix();
 
+	printf("=============LuDecompositionOfRandomMatrix\n");
+	tests.LuDecompositionOfRandomMatrix(1000);
+
 	_getch();
 	return 0;
 }

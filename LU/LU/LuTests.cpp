@@ -450,4 +450,58 @@ void LuTests::SolveLeftLowerBlockTestNonSquareMatrix()
 		printf("============= Print L\n");
 		decomposer->PrintMatrix(L, size);
 	}
+
+}
+
+void LuTests::LuDecompositionOfRandomMatrix(int size)
+{
+	double *A = new double[size * size]();
+	double *Acopy = new double[size * size]();
+	double *L = new double[size * size]();
+	double *U = new double[size * size]();
+
+
+	GenerateArray(A, size * size);
+	CopyArray(A, Acopy, size * size);
+
+	clock_t timeClock = clock();
+	decomposer->LU_Decomposition(A, L, U, size);
+	timeClock = clock() - timeClock;
+	printf("Run time %f seconds\n",((float)timeClock) / CLOCKS_PER_SEC);
+
+	bool isCorrect = decomposer->IsCorrectLU(Acopy, L, U, size);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+		printf("============= Error!\n");
+
+
+	if (!isCorrect)
+	{
+		printf("============= Print L\n");
+		decomposer->PrintMatrix(L, size);
+		printf("============= Print U\n");
+		decomposer->PrintMatrix(U, size);
+	}
+
+	delete[] L, U, A, Acopy;
+}
+
+void LuTests::GenerateArray(double *a, int size)
+{
+	srand((unsigned)time(0));
+
+	for (int i = 0; i < size; i++)
+	{
+		a[i] = (rand() % 20) + 1;
+	}
+}
+
+void LuTests::CopyArray(double *a, double *b, int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		b[i] = a[i];
+	}
 }

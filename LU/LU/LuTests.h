@@ -1,6 +1,8 @@
 #pragma once
 #include "LuDecomposer.h"
 #include "stdio.h"
+#include "stdlib.h"
+#include "time.h"
 class LuTests
 {
 public:
@@ -19,9 +21,12 @@ public:
 	void SolveLeftLowerBlockTestTwo();
 	void MaltiplicationTestOne();
 	void MaltiplicationTestTwo();
+	void LuDecompositionOfRandomMatrix(int size);
 
 
 private:
 	LuDecomposer *decomposer;
+	void GenerateArray(double *a, int size);
+	void CopyArray(double *a, double *b, int size);
 };
 
