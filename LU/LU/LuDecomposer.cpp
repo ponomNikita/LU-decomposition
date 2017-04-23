@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "math.h"
 #include "stdlib.h"
+#include <omp.h> 
 
 LuDecomposer::LuDecomposer()
 {
@@ -144,7 +145,7 @@ bool LuDecomposer::AreEqual(double *a, double *b, int n)
 void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, int subMatrixHeight, int subMatrixWidth, int rowBiasA, int colBiasA, int rowBiasB, int colBiasB)
 {
 	int u, v, p;
-	#pragma omp parallel  num_threads(threadCount)	
+#pragma omp parallel private(u, v, p)
 	{
 		#pragma omp for 
 		for (int i = 0; i < subMatrixHeight; i++)
@@ -155,7 +156,7 @@ void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, i
 				v = (j + rowBiasB) * size + colBiasB;
 				p = u + j;
 
-				#pragma simd
+				//#pragma simd
 				for (int t = 0; t < subMatrixHeight; t++)
 				{
 					Res[i * subMatrixHeight + t] += A[p] * B[v + t];
