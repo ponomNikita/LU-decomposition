@@ -17,7 +17,7 @@ public:
 
 private: 
 	const double DOUBLE_EPS = 0.00000001;
-	int BlockSize = 3;
+	int BlockSize = 32;
 
 	void Diff(double *A, double *B, int N, int subMatrixSize, int rowBias, int colBias);
 };

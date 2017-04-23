@@ -145,7 +145,7 @@ bool LuDecomposer::AreEqual(double *a, double *b, int n)
 void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, int subMatrixHeight, int subMatrixWidth, int rowBiasA, int colBiasA, int rowBiasB, int colBiasB)
 {
 	int u, v, p;
-#pragma omp parallel private(u, v, p)
+	#pragma omp parallel private(u, v, p)
 	{
 		#pragma omp for 
 		for (int i = 0; i < subMatrixHeight; i++)
@@ -156,7 +156,7 @@ void LuDecomposer::Multiplication(double *A, double *B, double *Res, int size, i
 				v = (j + rowBiasB) * size + colBiasB;
 				p = u + j;
 
-				//#pragma simd
+				#pragma simd
 				for (int t = 0; t < subMatrixHeight; t++)
 				{
 					Res[i * subMatrixHeight + t] += A[p] * B[v + t];
@@ -170,19 +170,23 @@ void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int 
 {
 	double sum;
 
-	// Цикл по столбцам матрицы А
-	for (int j = 0; j < subMatrixWidth; j++)
+	#pragma omp parallel private(sum)
 	{
-		// Цикл по строчкам L
-		for (int i = 0; i < subMatrixHeight; i++)
+		// Цикл по столбцам матрицы А
+		#pragma omp for 
+		for (int j = 0; j < subMatrixWidth; j++)
 		{
-			sum = 0;
-			for (int k = 0; k < i; k++)
+			// Цикл по строчкам L
+			for (int i = 0; i < subMatrixHeight; i++)
 			{
-				sum += U[(k + rowBiasU) * N + j + colBiasU] * L[(i + rowBiasL) * N + k + colBiasL];
-			}
+				sum = 0;
+				for (int k = 0; k < i; k++)
+				{
+					sum += U[(k + rowBiasU) * N + j + colBiasU] * L[(i + rowBiasL) * N + k + colBiasL];
+				}
 
-			U[(i + rowBiasU) * N + j + colBiasU] = A[(i + rowBiasU) * N + j + colBiasU] - sum;
+				U[(i + rowBiasU) * N + j + colBiasU] = A[(i + rowBiasU) * N + j + colBiasU] - sum;
+			}
 		}
 	}
 }
@@ -190,31 +194,38 @@ void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int 
 void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N, int subMatrixHeight, int subMatrixWidth, int rowBiasL, int colBiasL, int rowBiasU, int colBiasU)
 {
 	double sum;
-
-	// Цикл по строчка матрицы А
-	for (int j = 0; j < subMatrixHeight; j++)
+	#pragma omp parallel private(sum)
 	{
-		// Цикл по столбцам матрицы U
-		for (int i = 0; i < subMatrixWidth; i++)
+		// Цикл по строчка матрицы А
+		#pragma omp for 
+		for (int j = 0; j < subMatrixHeight; j++)
 		{
-			sum = 0;
-			for (int k = 0; k < i; k++)
+			// Цикл по столбцам матрицы U
+			for (int i = 0; i < subMatrixWidth; i++)
 			{
-				sum += U[(k + rowBiasU) * N + i + colBiasU] * L[(j + rowBiasL) * N + k + colBiasL];
-			}
+				sum = 0;
+				for (int k = 0; k < i; k++)
+				{
+					sum += U[(k + rowBiasU) * N + i + colBiasU] * L[(j + rowBiasL) * N + k + colBiasL];
+				}
 
-			L[(j + rowBiasL) * N + i + colBiasL] = (A[(j + rowBiasL) * N + i + colBiasL] - sum) / U[(i + rowBiasU) * N + i + colBiasU];
+				L[(j + rowBiasL) * N + i + colBiasL] = (A[(j + rowBiasL) * N + i + colBiasL] - sum) / U[(i + rowBiasU) * N + i + colBiasU];
+			}
 		}
 	}
 }
 
 void LuDecomposer::Diff(double *A, double *B, int N, int subMatrixSize, int rowBias, int colBias)
 {
-	for (int i = 0; i < subMatrixSize; i++)
+	#pragma omp parallel
 	{
-		for (int j = 0; j < subMatrixSize; j++)
+		#pragma omp for 
+		for (int i = 0; i < subMatrixSize; i++)
 		{
-			A[(i + rowBias) * N + j + colBias] -= B[i * subMatrixSize + j];
+			for (int j = 0; j < subMatrixSize; j++)
+			{
+				A[(i + rowBias) * N + j + colBias] -= B[i * subMatrixSize + j];
+			}
 		}
 	}
 }
