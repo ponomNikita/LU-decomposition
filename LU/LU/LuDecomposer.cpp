@@ -1,6 +1,7 @@
 #include "LuDecomposer.h"
 #include "stdio.h"
 #include "math.h"
+#include "stdlib.h"
 
 LuDecomposer::LuDecomposer()
 {
@@ -28,27 +29,29 @@ void LuDecomposer::LU_Decomposition(double * A, double * L, double * U, int N)
 
 	for (int i = 0; i <= blockCount; i++)
 	{
-	/*	if (currMatrixSize - BlockSize <= 0)
+		if (currMatrixSize - BlockSize <= 0)
 		{
-			LU(A, L, U, N, BlockSize, i * BlockSize, i * BlockSize);
+			LU(A, L, U, N, currMatrixSize, i * BlockSize, i * BlockSize);
 			break;
 		}
 
 		LU(A, L, U, N, BlockSize, i * BlockSize, i * BlockSize);
 
-		SolveRightUpperBlock(A, L, U, N, BlockSize, currMatrixSize - BlockSize, i * BlockSize, (i + 1) * BlockSize);
+		SolveRightUpperBlock(A, L, U, N, BlockSize, currMatrixSize - BlockSize, i * BlockSize, i * BlockSize, i * BlockSize, (i + 1) * BlockSize);
 
-		SolveLeftLowerBlock(A, L, U, N, currMatrixSize - BlockSize, BlockSize, (i + 1) * BlockSize, i * BlockSize);
+		SolveLeftLowerBlock(A, L, U, N, currMatrixSize - BlockSize, BlockSize, (i + 1) * BlockSize, i * BlockSize, i * BlockSize, i * BlockSize);
 
 		double *L21U12 = new double[(currMatrixSize - BlockSize) * (currMatrixSize - BlockSize)]();
 		Multiplication(L, U, L21U12, N, currMatrixSize - BlockSize, BlockSize, (i + 1) * BlockSize, i * BlockSize, i * BlockSize, (i + 1) * BlockSize);
 
-		Diff(A, L21U12, currMatrixSize - BlockSize, (i + 1) * BlockSize, (i + 1) * BlockSize);
+		Diff(A, L21U12, N, currMatrixSize - BlockSize, (i + 1) * BlockSize, (i + 1) * BlockSize);
 
-		currMatrixSize = currMatrixSize - BlockSize;*/
+		currMatrixSize = currMatrixSize - BlockSize;
+
+		delete[] L21U12;
 	}
 
-	LU(A, L, U, N, N, 0, 0);
+	//LU(A, L, U, N, N, 0, 0);
 }
 
 /*
@@ -106,7 +109,9 @@ void LuDecomposer::PrintMatrix(double *A, int n)
 
 bool LuDecomposer::IsCorrectLU(double *A, double *L, double *U, int size)
 {
-	double *LU = new double[size * size]();
+	int _size = size * size;
+	double *LU = new double[_size]();
+
 	Multiplication(L, U, LU, size, size, size, 0, 0, 0, 0);
 	
 	bool res = AreEqual(A, LU, size);
@@ -117,6 +122,7 @@ bool LuDecomposer::IsCorrectLU(double *A, double *L, double *U, int size)
 	}
 
 	delete[] LU;
+	LU = NULL;
 
 	return res;
 }
@@ -127,7 +133,9 @@ bool LuDecomposer::AreEqual(double *a, double *b, int n)
 	for (int i = 0; i < n * n; i++)
 	{
 		if (abs(a[i] - b[i]) > DOUBLE_EPS)
+		{
 			return false;
+		}
 	}
 
 	return true;
@@ -199,13 +207,13 @@ void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N
 	}
 }
 
-void LuDecomposer::Diff(double *A, double *B, int subMatrixSize, int rowBias, int colBias)
+void LuDecomposer::Diff(double *A, double *B, int N, int subMatrixSize, int rowBias, int colBias)
 {
 	for (int i = 0; i < subMatrixSize; i++)
 	{
 		for (int j = 0; j < subMatrixSize; j++)
 		{
-			A[(i + rowBias) * subMatrixSize + j + colBias] -= B[i * subMatrixSize + j];
+			A[(i + rowBias) * N + j + colBias] -= B[i * subMatrixSize + j];
 		}
 	}
 }

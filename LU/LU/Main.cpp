@@ -19,6 +19,9 @@ int main()
 	printf("============= LuDecomposerTestTwo\n");
 	tests.LuDecomposerTestTwo();
 
+	printf("============= LuDecomposerTest3\n");
+	tests.LuDecomposerTest3();
+
 	printf("============= SolveRightUpperBlockTestOne\n");
 	tests.SolveRightUpperBlockTestOne();
 
@@ -39,6 +42,9 @@ int main()
 
 	printf("=============SolveRightUpperBlockTestForNonSquareMatrix\n");
 	tests.SolveRightUpperBlockTestForNonSquareMatrix();
+
+	printf("=============SolveLeftLowerBlockTestNonSquareMatrix\n");
+	tests.SolveLeftLowerBlockTestNonSquareMatrix();
 
 	_getch();
 	return 0;

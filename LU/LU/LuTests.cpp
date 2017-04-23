@@ -63,10 +63,53 @@ void LuTests::LuDecomposerTestTwo()
 		21, 22, 4, 24, 25
 	};
 
+	double AforCheck[] = {
+		1, 2, 3, 9, 5,
+		6, 3, 8, 9, 10,
+		11, 5, 7, 34, 15,
+		16, 17, 1, 19, 20,
+		21, 22, 4, 24, 25
+	};
+
 	L = new double[size * size]();
 	U = new double[size * size]();
 
 	decomposer->LU_Decomposition(A, L, U, size);
+
+	bool isCorrect = decomposer->IsCorrectLU(AforCheck, L, U, size);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+		printf("============= Error!\n");
+
+	if (!isCorrect)
+	{
+		printf("============= Print L\n");
+		decomposer->PrintMatrix(L, size);
+		printf("============= Print U\n");
+		decomposer->PrintMatrix(U, size);
+	}
+
+	delete[] L, U, A;
+}
+
+void LuTests::LuDecomposerTest3()
+{
+	int size = 5;
+	double *L, *U;
+	double A[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0,
+		0, 0, 7, 34, 15,
+		0, 0, 1, 19, 20,
+		0, 0, 4, 24, 25
+	};
+
+	L = new double[size * size]();
+	U = new double[size * size]();
+
+	decomposer->LU(A, L, U, size, 3, 2, 2);
 
 	bool isCorrect = decomposer->IsCorrectLU(A, L, U, size);
 
@@ -362,5 +405,49 @@ void LuTests::SolveRightUpperBlockTestForNonSquareMatrix()
 		printf("============= Error!\n");
 		printf("============= Print U\n");
 		decomposer->PrintMatrix(U, size);
+	}
+}
+
+
+void LuTests::SolveLeftLowerBlockTestNonSquareMatrix()
+{
+	int size = 5;
+	double A[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0,
+		1, 2, 0, 0, 0,
+		2, 1, 0, 0, 0,
+		1, 2, 0, 0, 0
+	};
+
+	double U[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0,
+		0, 1, 1, 0, 0,
+		0, 0, 1, 0, 0,
+		0, 0, 0, 0, 0
+	};
+
+	double *L = new double[size * size]();
+
+	double expectedL[] = {
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0,
+		1, 1, 0, 0, 0,
+		2, -1, 0, 0, 0,
+		1, 1, 0, 0, 0
+	};
+
+	decomposer->SolveLeftLowerBlock(A, L, U, size, 3, 2, 2, 0, 2, 1);
+
+	bool isCorrect = decomposer->AreEqual(L, expectedL, size);
+
+	if (isCorrect)
+		printf("============= Success!\n");
+	else
+	{
+		printf("============= Error!\n");
+		printf("============= Print L\n");
+		decomposer->PrintMatrix(L, size);
 	}
 }

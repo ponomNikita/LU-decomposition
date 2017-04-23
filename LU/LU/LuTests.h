@@ -10,9 +10,11 @@ public:
 
 	void LuDecomposerTestOne();
 	void LuDecomposerTestTwo();
+	void LuDecomposerTest3();
 	void SolveRightUpperBlockTestOne();
 	void SolveRightUpperBlockTestTwo();
 	void SolveRightUpperBlockTestForNonSquareMatrix();
+	void SolveLeftLowerBlockTestNonSquareMatrix();
 	void SolveLeftLowerBlockTestOne();
 	void SolveLeftLowerBlockTestTwo();
 	void MaltiplicationTestOne();
