@@ -172,20 +172,28 @@ void LuDecomposer::SolveRightUpperBlock(double * A, double * L, double * U, int 
 
 	#pragma omp parallel private(sum)
 	{
+		int m, n, r;
+		int coo1 = colBiasU + rowBiasU * N;
+		int coo2 = rowBiasL * N + colBiasL;
+
 		// Цикл по столбцам матрицы А
 		#pragma omp for 
 		for (int j = 0; j < subMatrixWidth; j++)
 		{
+			n = j + coo1;
+
 			// Цикл по строчкам L
 			for (int i = 0; i < subMatrixHeight; i++)
 			{
+				m = i * N + coo2;
 				sum = 0;
+				#pragma simd
 				for (int k = 0; k < i; k++)
 				{
-					sum += U[(k + rowBiasU) * N + j + colBiasU] * L[(i + rowBiasL) * N + k + colBiasL];
+					sum += U[k * N  + n] * L[m + k];
 				}
 
-				U[(i + rowBiasU) * N + j + colBiasU] = A[(i + rowBiasU) * N + j + colBiasU] - sum;
+				U[i * N + n] = A[i * N + n] - sum;
 			}
 		}
 	}
@@ -196,20 +204,27 @@ void LuDecomposer::SolveLeftLowerBlock(double * A, double * L, double * U, int N
 	double sum;
 	#pragma omp parallel private(sum)
 	{
+		int m, n, r;
+		int coo1 = rowBiasU * N + colBiasU;
+		int coo2 = rowBiasL * N + colBiasL;
 		// Цикл по строчка матрицы А
 		#pragma omp for 
 		for (int j = 0; j < subMatrixHeight; j++)
 		{
+			m = j * N + coo2;
+
 			// Цикл по столбцам матрицы U
 			for (int i = 0; i < subMatrixWidth; i++)
 			{
+				n = coo1 + i;
 				sum = 0;
+				#pragma simd
 				for (int k = 0; k < i; k++)
 				{
-					sum += U[(k + rowBiasU) * N + i + colBiasU] * L[(j + rowBiasL) * N + k + colBiasL];
+					sum += U[k * N + n] * L[k + m];
 				}
 
-				L[(j + rowBiasL) * N + i + colBiasL] = (A[(j + rowBiasL) * N + i + colBiasL] - sum) / U[(i + rowBiasU) * N + i + colBiasU];
+				L[m + i] = (A[m + i] - sum) / U[i * N + n];
 			}
 		}
 	}
@@ -219,12 +234,16 @@ void LuDecomposer::Diff(double *A, double *B, int N, int subMatrixSize, int rowB
 {
 	#pragma omp parallel
 	{
+		int m, n;
+		int coo = rowBias * N + colBias;
 		#pragma omp for 
 		for (int i = 0; i < subMatrixSize; i++)
 		{
+			m = i * subMatrixSize;
+			n = i * N + coo;
 			for (int j = 0; j < subMatrixSize; j++)
 			{
-				A[(i + rowBias) * N + j + colBias] -= B[i * subMatrixSize + j];
+				A[j + n] -= B[m + j];
 			}
 		}
 	}
